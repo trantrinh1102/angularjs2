@@ -1,32 +1,24 @@
-// import { Injectable } from '@angular/core';
-// import { Hero } from './hero';
-// import { HEROES } from './mock-heroes';
-// @Injectable()
-// export class HeroService {
-//   getHeroes(): Promise<Hero[]> {
-//     return Promise.resolve(HEROES);
-//   }
-// }
-
 import { Injectable } from '@angular/core';
+import { Http } from '@angular/http';
+
+import 'rxjs/add/operator/toPromise';
 
 import { Hero } from './hero';
 import { HEROES } from './mock-heroes';
 
 @Injectable()
 export class HeroService {
+  constructor(public http: Http) {}
+
   getHeroes(): Promise<Hero[]> {
-    return Promise.resolve(HEROES);
-  }
-  // See the "Take it slow" appendix
-  getHeroesSlowly(): Promise<Hero[]> {
-    return new Promise<Hero[]>(resolve =>
-      setTimeout(resolve, 2000)) // delay 2 seconds
-      .then(() => this.getHeroes());
-  }
-  getHero(id: number): Promise<Hero> {
-    return this.getHeroes()
-               .then(heroes => heroes.find(hero => hero.id === id));
+    return this.http.get('http://localhost:3001/heroes.json')
+               .toPromise()
+               .then(response => response.json() as Hero[]);
   }
 
+  getHero(id: number) {
+    return this.http.get('http://localhost:3001/heroes/' + id + '.json')
+               .toPromise()
+               .then(response => response.json() as Hero);
+  }
 }

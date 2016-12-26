@@ -1,12 +1,3 @@
-// import { Injectable } from '@angular/core';
-// import { Hero } from './hero';
-// import { HEROES } from './mock-heroes';
-// @Injectable()
-// export class HeroService {
-//   getHeroes(): Promise<Hero[]> {
-//     return Promise.resolve(HEROES);
-//   }
-// }
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -18,28 +9,25 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var core_1 = require('@angular/core');
-var mock_heroes_1 = require('./mock-heroes');
+var http_1 = require('@angular/http');
+require('rxjs/add/operator/toPromise');
 var HeroService = (function () {
-    function HeroService() {
+    function HeroService(http) {
+        this.http = http;
     }
     HeroService.prototype.getHeroes = function () {
-        return Promise.resolve(mock_heroes_1.HEROES);
-    };
-    // See the "Take it slow" appendix
-    HeroService.prototype.getHeroesSlowly = function () {
-        var _this = this;
-        return new Promise(function (resolve) {
-            return setTimeout(resolve, 2000);
-        }) // delay 2 seconds
-            .then(function () { return _this.getHeroes(); });
+        return this.http.get('http://localhost:3001/heroes.json')
+            .toPromise()
+            .then(function (response) { return response.json(); });
     };
     HeroService.prototype.getHero = function (id) {
-        return this.getHeroes()
-            .then(function (heroes) { return heroes.find(function (hero) { return hero.id === id; }); });
+        return this.http.get('http://localhost:3001/heroes/' + id + '.json')
+            .toPromise()
+            .then(function (response) { return response.json(); });
     };
     HeroService = __decorate([
         core_1.Injectable(), 
-        __metadata('design:paramtypes', [])
+        __metadata('design:paramtypes', [http_1.Http])
     ], HeroService);
     return HeroService;
 }());
